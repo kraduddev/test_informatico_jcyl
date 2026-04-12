@@ -112,6 +112,47 @@ test-jcyl/
 
 ---
 
+## 🐳 Despliegue con Docker (VPS)
+
+### Construir y ejecutar localmente
+
+```bash
+# Construir la imagen
+docker build -t quiz-jcyl:latest .
+
+# Arrancar el contenedor (puerto 80 del host)
+docker run -d --name quiz-jcyl -p 80:80 --restart unless-stopped quiz-jcyl:latest
+
+# Ver logs
+docker logs -f quiz-jcyl
+```
+
+### Publicar en un registry y desplegar en el VPS
+
+```bash
+# 1. Etiquetar y subir al registry (sustituye 'usuario' por tu usuario de Docker Hub / ghcr.io)
+docker build -t usuario/quiz-jcyl:latest .
+docker push usuario/quiz-jcyl:latest
+
+# 2. En el VPS
+ssh usuario@ip-del-vps
+docker pull usuario/quiz-jcyl:latest
+docker stop quiz-jcyl && docker rm quiz-jcyl   # si ya existía
+docker run -d --name quiz-jcyl -p 80:80 --restart unless-stopped usuario/quiz-jcyl:latest
+```
+
+### Con dominio + HTTPS (Nginx Proxy Manager o Caddy en el VPS)
+
+Si usas un proxy inverso delante (recomendado), expón el contenedor solo en localhost:
+
+```bash
+docker run -d --name quiz-jcyl -p 127.0.0.1:8080:80 --restart unless-stopped quiz-jcyl:latest
+```
+
+Luego configura el proxy para que reenvíe `https://tudominio.com` → `http://127.0.0.1:8080`.
+
+---
+
 ## 🌐 Despliegue en producción
 
 Al ser una web estática basta con copiar todos los ficheros a cualquier hosting:

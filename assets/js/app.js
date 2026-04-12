@@ -30,6 +30,14 @@ document.addEventListener('DOMContentLoaded', () => {
   showScreen('selector');
   initManifest();
 
+  // Logo → volver al inicio desde cualquier pantalla
+  document.getElementById('btn-logo').addEventListener('click', e => {
+    e.preventDefault();
+    import('./manifest.js').then(m => m.clearSessionState());
+    showScreen('selector');
+    initManifest();
+  });
+
   // ── Selector ──────────────────────────────────────────────────────────────
   document.getElementById('btn-go-stats').addEventListener('click', () => {
     renderStats();
