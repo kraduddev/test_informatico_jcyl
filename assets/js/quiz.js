@@ -145,7 +145,7 @@ export function startQuiz() {
     mezclar,
     queue,
     currentIndex: 0,
-    answers:      [],   // { correct: bool }
+    answers:      [],   // { result: 'correct' | 'wrong' | 'blank' }
     startedAt:    new Date().toISOString()
   };
 
@@ -177,13 +177,14 @@ export function startQuizFromSession(state) {
 function renderCard() {
   const { queue, currentIndex, answers } = sessionState;
   const total    = queue.length;
-  const aciertos = answers.filter(a => a.correct).length;
+  const aciertos = answers.filter(a => a.result === 'correct').length;
+  const fallos   = answers.filter(a => a.result === 'wrong').length;
 
   // Topbar
   document.getElementById('quiz-progress-text').textContent =
     `${currentIndex + 1} / ${total}`;
   document.getElementById('quiz-score-badge').textContent =
-    `✓ ${aciertos}`;
+    `✓ ${aciertos}  ✗ ${fallos}`;
 
   // Barra de progreso
   const pct = (currentIndex / total) * 100;
@@ -205,12 +206,14 @@ function renderCard() {
     </button>
   `).join('');
 
-  // Ocultar explicación y botón siguiente
+  // Ocultar explicación y botón siguiente; mostrar botón dejar en blanco
   const expl   = document.getElementById('explanation-box');
-  const btnNext = document.getElementById('btn-next');
+  const btnNext  = document.getElementById('btn-next');
+  const btnBlank = document.getElementById('btn-blank');
   expl.classList.remove('visible');
   expl.querySelector('p').textContent = '';
-  btnNext.style.display = 'none';
+  btnNext.style.display  = 'none';
+  btnBlank.style.display = '';
 
   // Eventos de opciones
   opsList.querySelectorAll('.option-btn').forEach(btn => {
@@ -221,6 +224,9 @@ function renderCard() {
 function handleAnswer(selectedBtn, pregunta) {
   // Bloquear todas las opciones
   document.querySelectorAll('.option-btn').forEach(b => b.disabled = true);
+
+  // Ocultar botón dejar en blanco
+  document.getElementById('btn-blank').style.display = 'none';
 
   const isCorrect = selectedBtn.dataset.key === pregunta.respuesta_correcta;
 
@@ -242,7 +248,39 @@ function handleAnswer(selectedBtn, pregunta) {
   expl.classList.add('visible');
 
   // Guardar respuesta
-  sessionState.answers.push({ correct: isCorrect });
+  sessionState.answers.push({ result: isCorrect ? 'correct' : 'wrong' });
+  saveSessionState(sessionState);
+
+  // Mostrar botón siguiente / finalizar
+  const btnNext = document.getElementById('btn-next');
+  const esUltima = sessionState.currentIndex === sessionState.queue.length - 1;
+  btnNext.textContent = esUltima ? 'Ver resultados' : 'Siguiente →';
+  btnNext.style.display = 'inline-flex';
+}
+
+export function handleBlank() {
+  const pregunta = sessionState.queue[sessionState.currentIndex];
+
+  // Bloquear todas las opciones
+  document.querySelectorAll('.option-btn').forEach(b => b.disabled = true);
+
+  // Ocultar botón dejar en blanco
+  document.getElementById('btn-blank').style.display = 'none';
+
+  // Revelar la respuesta correcta
+  document.querySelectorAll('.option-btn').forEach(b => {
+    if (b.dataset.key === pregunta.respuesta_correcta) {
+      b.classList.add('correct');
+    }
+  });
+
+  // Mostrar explicación
+  const expl = document.getElementById('explanation-box');
+  expl.querySelector('p').textContent = pregunta.explicacion;
+  expl.classList.add('visible');
+
+  // Guardar respuesta en blanco
+  sessionState.answers.push({ result: 'blank' });
   saveSessionState(sessionState);
 
   // Mostrar botón siguiente / finalizar
@@ -266,7 +304,9 @@ export function nextCard() {
 
 function finishQuiz() {
   const { answers, queue, testId, testName, temasFiltrados, startedAt } = sessionState;
-  const aciertos = answers.filter(a => a.correct).length;
+  const aciertos = answers.filter(a => a.result === 'correct').length;
+  const fallos   = answers.filter(a => a.result === 'wrong').length;
+  const blancos  = answers.filter(a => a.result === 'blank').length;
   const total    = queue.length;
 
   // Guardar en historial
@@ -276,6 +316,8 @@ function finishQuiz() {
     temasFiltrados,
     total,
     aciertos,
+    fallos,
+    blancos,
     fecha: new Date().toISOString(),
     duracion: startedAt ? Math.round((Date.now() - new Date(startedAt).getTime()) / 1000) : null
   };
@@ -284,14 +326,16 @@ function finishQuiz() {
   // Limpiar sesión en curso
   clearSessionState();
 
-  renderResults(aciertos, total, queue, answers);
+  renderResults(aciertos, fallos, blancos, total, queue, answers);
   showScreen('results');
 }
 
 // ─── Pantalla de resultados ───────────────────────────────────────────────────
 
-function renderResults(aciertos, total, queue, answers) {
-  const pct = total ? Math.round((aciertos / total) * 100) : 0;
+function renderResults(aciertos, fallos, blancos, total, queue, answers) {
+  // Puntuación con penalización: correctas - incorrectas/3
+  const puntuacion = aciertos - fallos / 3;
+  const pct = total ? Math.round((puntuacion / total) * 100) : 0;
 
   // Círculo de puntuación
   const circle = document.getElementById('score-circle');
@@ -299,7 +343,8 @@ function renderResults(aciertos, total, queue, answers) {
   circle.className   = 'score-circle ' + scoreClass(pct);
 
   document.getElementById('results-correct').textContent = aciertos;
-  document.getElementById('results-wrong').textContent   = total - aciertos;
+  document.getElementById('results-wrong').textContent   = fallos;
+  document.getElementById('results-blank').textContent   = blancos;
   document.getElementById('results-total').textContent   = total;
 
   // Mensaje motivacional
@@ -314,7 +359,7 @@ function renderResults(aciertos, total, queue, answers) {
   queue.forEach((p, i) => {
     if (!temasStats[p.tema]) temasStats[p.tema] = { ok: 0, total: 0 };
     temasStats[p.tema].total++;
-    if (answers[i] && answers[i].correct) temasStats[p.tema].ok++;
+    if (answers[i] && answers[i].result === 'correct') temasStats[p.tema].ok++;
   });
 
   const tbody = document.getElementById('topics-results-body');
@@ -339,6 +384,46 @@ function renderResults(aciertos, total, queue, answers) {
         </tr>
       `;
     }).join('');
+
+  // Revisión de errores
+  const wrongSection = document.getElementById('wrong-answers-section');
+  const wrongList    = document.getElementById('wrong-answers-list');
+  const wrongEntries = queue
+    .map((p, i) => ({ pregunta: p, answer: answers[i] }))
+    .filter(({ answer }) => answer && answer.result === 'wrong');
+
+  if (wrongEntries.length) {
+    wrongList.innerHTML = '';
+    wrongEntries.forEach(({ pregunta }) => {
+      const correctaKey  = pregunta.respuesta_correcta;
+      const correctaText = (pregunta.opciones.find(o => o.key === correctaKey) || {}).text || correctaKey;
+
+      const item = document.createElement('div');
+      item.className = 'wrong-answer-item';
+
+      const pQuestion = document.createElement('p');
+      pQuestion.className = 'wa-question';
+      pQuestion.textContent = pregunta.enunciado;
+      item.appendChild(pQuestion);
+
+      const pCorrect = document.createElement('p');
+      pCorrect.className = 'wa-correct-answer';
+      pCorrect.textContent = `✓ Respuesta correcta: ${correctaText}`;
+      item.appendChild(pCorrect);
+
+      if (pregunta.explicacion) {
+        const pExpl = document.createElement('p');
+        pExpl.className = 'wa-explanation';
+        pExpl.textContent = pregunta.explicacion;
+        item.appendChild(pExpl);
+      }
+
+      wrongList.appendChild(item);
+    });
+    wrongSection.style.display = '';
+  } else {
+    wrongSection.style.display = 'none';
+  }
 }
 
 export function retryQuiz() {

@@ -7,7 +7,7 @@
 import { initManifest } from './manifest.js';
 import {
   startQuiz, nextCard, retryQuiz,
-  selectAllTopics, getCurrentTest
+  selectAllTopics, getCurrentTest, handleBlank
 } from './quiz.js';
 import { renderStats, handleClearHistory } from './stats.js';
 
@@ -55,6 +55,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // ── Quiz ──────────────────────────────────────────────────────────────────
   document.getElementById('btn-next').addEventListener('click', nextCard);
+  document.getElementById('btn-blank').addEventListener('click', handleBlank);
   document.getElementById('btn-quit-quiz').addEventListener('click', () => {
     if (confirm('¿Salir del test actual? El progreso de esta sesión se perderá.')) {
       // Limpiar sesión en curso

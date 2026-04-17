@@ -167,6 +167,9 @@
 
         <!-- Navegación -->
         <div class="quiz-nav">
+          <button class="btn btn-secondary" id="btn-blank">
+            — Dejar en blanco
+          </button>
           <button class="btn btn-primary btn-lg" id="btn-next" style="display:none">
             Siguiente →
           </button>
@@ -192,6 +195,10 @@
               <div class="results-meta-item">
                 <span class="val badge-wrong" id="results-wrong">0</span>
                 <span class="lbl">Incorrectas</span>
+              </div>
+              <div class="results-meta-item">
+                <span class="val badge-blank" id="results-blank">0</span>
+                <span class="lbl">En blanco</span>
               </div>
               <div class="results-meta-item">
                 <span class="val" id="results-total">0</span>
@@ -223,6 +230,13 @@
             <button class="btn btn-secondary"     id="btn-back-from-results">← Inicio</button>
             <button class="btn btn-secondary"     id="btn-results-go-stats">📊 Estadísticas</button>
             <button class="btn btn-primary btn-lg" id="btn-retry">🔄 Repetir</button>
+          </div>
+
+          <!-- Revisión de errores -->
+          <div id="wrong-answers-section" style="display:none">
+            <hr class="divider" />
+            <p class="section-title">Revisión de errores</p>
+            <div id="wrong-answers-list"></div>
           </div>
         </div>
 
