@@ -540,10 +540,10 @@
       "numero": 42,
       "enunciado": "¿Qué estructura tienen las declaraciones de xAPI para registrar eventos de aprendizaje?",
       "opciones": {
-        "a": "<usuario, evento, curso>.",
-        "b": "<actor, verbo, objeto>.",
-        "c": "<rol, acción, contexto>.",
-        "d": "<alumno, tarea, resultado>."
+        "a": "usuario, evento, curso.",
+        "b": "actor, verbo, objeto.",
+        "c": "rol, acción, contexto.",
+        "d": "alumno, tarea, resultado."
       },
       "respuesta_correcta": "b",
       "tema": "Tecnologías de Aprendizaje",
