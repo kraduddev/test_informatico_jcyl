@@ -1,6 +1,6 @@
 # Quiz JCyL — Técnico Superior de Informática
 
-Web estática tipo **quiz/flashcard** y **visor de supuestos prácticos** para preparar las oposiciones de Técnico Superior de Informática de la Junta de Castilla y León. Sin dependencias externas, funciona en cualquier servidor estático.
+Web estática tipo **quiz/flashcard** y **visor de supuestos prácticos** para preparar las oposiciones de Técnico Superior de Informática de la Junta de Castilla y León (JCyL) y del Cuerpo Superior TIC de la Administración General del Estado (AGE). Sin dependencias externas, funciona en cualquier servidor estático.
 
 ---
 
@@ -31,10 +31,12 @@ Usa el plugin **Live Server** o el servidor de desarrollo integrado de tu IDE.
 test-jcyl/
 ├── index.html                   ← SPA principal
 ├── README.md
+├── dockerfile
+├── nginx.conf
 ├── tests/
 │   ├── index.json               ← Manifiesto de tests disponibles
-│   ├── test-2024.json           ← Examen JCyL octubre 2024
-│   └── test-age-2025.json       ← Examen AGE 2025
+│   ├── test-2024.json           ← Técnico Superior Informática — JCyL (oct. 2024)
+│   └── test-age-2025.json       ← Cuerpo Superior TIC — AGE (feb. 2025)
 ├── supuestos/
 │   └── categorias.json          ← Supuestos prácticos agrupados por categoría
 └── assets/
@@ -43,7 +45,7 @@ test-jcyl/
     └── js/
         ├── app.js               ← Punto de entrada, dashboard y navegación
         ├── manifest.js          ← Carga del manifiesto y banner de sesión en curso
-        ├── quiz.js              ← Motor del quiz, aleatoriedad, persistencia
+        ├── quiz.js              ← Motor del quiz, aleatoriedad, penalización, persistencia
         ├── stats.js             ← Pantalla de estadísticas históricas
         └── supuestos.js         ← Carga y renderizado de supuestos prácticos
 ```
@@ -56,15 +58,29 @@ test-jcyl/
 Dashboard
 ├── 📝 Tests
 │   ├── Selección de test
-│   ├── Configuración (temas, aleatoridad)
-│   ├── Quiz (flashcard con retroalimentación)
+│   ├── Configuración (temas, orden aleatorio)
+│   ├── Quiz
+│   │   ├── Responder opción  → retroalimentación inmediata + explicación
+│   │   └── Dejar en blanco  → penalización -1/3 sobre la nota final
 │   ├── Resultados
+│   │   ├── Puntuación con penalización (correctas − incorrectas/3)
+│   │   ├── Desglose por tema
+│   │   └── Revisión de errores (preguntas falladas con respuesta correcta)
 │   └── Estadísticas históricas
 │
 └── 📋 Supuestos Prácticos
-    ├── 📂 Por Examen → preguntas agrupadas por convocatoria/origen
+    ├── 📂 Por Examen    → preguntas agrupadas por convocatoria/origen
     └── 🏷️ Por Categoría → preguntas agrupadas por área temática
 ```
+
+---
+
+## 🗂️ Tests disponibles
+
+| Test | Convocatoria | Preguntas |
+|---|---|---|
+| Técnico Superior de Informática — JCyL | 26 oct. 2024 | 75 |
+| Cuerpo Superior TIC — AGE | 14 feb. 2025 | 100 |
 
 ---
 
@@ -105,6 +121,13 @@ Dashboard
     "ejercicio": "Primer Ejercicio",
     "fecha": "26 de octubre de 2024",
     "fichero": "tests/test-2024.json"
+  },
+  {
+    "id": "test-age-2025",
+    "nombre": "Cuerpo Superior TIC — AGE",
+    "ejercicio": "Primer Ejercicio",
+    "fecha": "14 de febrero de 2025",
+    "fichero": "tests/test-age-2025.json"
   }
 ]
 ```
@@ -158,6 +181,9 @@ La vista **Por Categoría** muestra cada categoría con sus conceptos core, leye
 | **Aleatoriedad total** | Las preguntas y sus opciones se barajan con Fisher-Yates en cada sesión |
 | **Filtro por temas** | Practica solo los bloques temáticos que te interesen |
 | **Retroalimentación inmediata** | Al responder se resalta la opción correcta/incorrecta y aparece la explicación |
+| **Respuesta en blanco** | Opción "Dejar en blanco" en cada pregunta; penalización de −1/3 sobre la puntuación final |
+| **Puntuación con penalización** | Nota = correctas − (incorrectas / 3); se muestra al terminar |
+| **Revisión de errores** | Al finalizar el test se listan todas las preguntas falladas con su respuesta correcta |
 | **Sesión en curso** | Si recargas la página, puedes retomar el test donde lo dejaste |
 | **Historial de estadísticas** | KPIs globales + desglose de todas las sesiones anteriores por test |
 | **Supuestos por examen** | Vista agrupada por convocatoria con acordeón por origen |
