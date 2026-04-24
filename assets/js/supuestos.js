@@ -229,14 +229,18 @@ function bindPlantillaExamen(container) {
 
       content.innerHTML = '<div class="loader-wrap"><div class="loader"></div></div>';
 
-      try {
+        try {
         const fichero = ORIGEN_A_FICHERO[origen];
         const res = await fetch(fichero);
-        if (!res.ok) throw new Error(`No se pudo cargar ${fichero}`);
+        if (!res.ok) throw new Error(`No se pudo cargar ${fichero} (HTTP ${res.status})`);
         const text = await res.text();
-        const html = window.marked.parse(text);
-        mdCache[origen] = html;
-        content.innerHTML = html;
+        if (!window.marked) {
+          // marked no disponible: mostrar como texto preformateado
+          mdCache[origen] = `<pre style="white-space:pre-wrap;font-size:.85rem">${text.replace(/</g,'&lt;')}</pre>`;
+        } else {
+          mdCache[origen] = window.marked.parse(text);
+        }
+        content.innerHTML = mdCache[origen];
       } catch (e) {
         content.innerHTML = `<p class="supuestos-error">${e.message}</p>`;
       }
