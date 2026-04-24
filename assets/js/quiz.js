@@ -8,7 +8,7 @@
  *  - Guardado de sesión finalizada en el historial
  */
 
-import { showScreen } from './app.js';
+import { showScreen } from './navigation.js';
 import { saveSessionState, clearSessionState } from './manifest.js';
 
 const STORAGE_HISTORY_KEY = 'quizHistory';

@@ -4,6 +4,7 @@
  * Gestiona la navegación entre pantallas y conecta los módulos.
  */
 
+import { initNavigation, showScreen, navigate } from './navigation.js';
 import { initManifest, clearSessionState } from './manifest.js';
 import {
   startQuiz, nextCard, retryQuiz,
@@ -12,38 +13,12 @@ import {
 import { renderStats, handleClearHistory } from './stats.js';
 import { renderPorExamen, renderPorCategoria } from './supuestos.js';
 
-// ─── Pantallas donde se oculta el botón de estadísticas ───────────────────────
-const SUPUESTOS_SCREENS = new Set(['supuestos-menu', 'supuestos-examenes', 'supuestos-categorias']);
-
-// ─── Caché de elementos DOM reutilizados ──────────────────────────────────────
-let allScreens = null;
-let btnStats   = null;
-
-// ─── Navegación entre pantallas ───────────────────────────────────────────────
-
-export function showScreen(name) {
-  allScreens.forEach(s => s.classList.remove('active'));
-  const target = document.getElementById(`screen-${name}`);
-  if (target) {
-    target.classList.add('active');
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-  }
-  btnStats.style.display = SUPUESTOS_SCREENS.has(name) ? 'none' : '';
-}
-
-/** Navega a una pantalla y ejecuta una acción opcional al entrar. */
-function navigate(name, onEnter) {
-  showScreen(name);
-  onEnter?.();
-}
-
 // ─── Bootstrap ────────────────────────────────────────────────────────────────
 
 document.addEventListener('DOMContentLoaded', () => {
 
-  // Cachear elementos reutilizados en showScreen
-  allScreens = Array.from(document.querySelectorAll('.screen'));
-  btnStats   = document.getElementById('btn-go-stats');
+  // Inicializar la caché de elementos de navegación
+  initNavigation();
 
   // Pantalla inicial
   showScreen('dashboard');
@@ -55,7 +30,8 @@ document.addEventListener('DOMContentLoaded', () => {
     showScreen('dashboard');
   });
 
-  btnStats.addEventListener('click', () => navigate('stats', renderStats));
+  document.getElementById('btn-go-stats').addEventListener('click',
+    () => navigate('stats', renderStats));
 
   // ── Dashboard ─────────────────────────────────────────────────────────────
   document.getElementById('btn-go-tests').addEventListener('click',

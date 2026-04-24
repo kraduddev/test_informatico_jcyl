@@ -4,7 +4,7 @@
  * Detecta si hay una sesión en curso guardada en localStorage.
  */
 
-import { showScreen } from './app.js';
+import { showScreen } from './navigation.js';
 import { startQuizFromSession, loadTest } from './quiz.js';
 
 const STORAGE_SESSION_KEY = 'quizSessionState';

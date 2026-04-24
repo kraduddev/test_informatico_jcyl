@@ -4,7 +4,7 @@
  * Lee quizHistory de localStorage, calcula métricas y renderiza.
  */
 
-import { showScreen } from './app.js';
+import { showScreen } from './navigation.js';
 import { getHistory, clearHistory } from './quiz.js';
 
 export function renderStats() {
