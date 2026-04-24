@@ -8,6 +8,8 @@ RUN mkdir -p /code
 RUN rm -rf /usr/share/nginx/html/* \
     && rm /etc/nginx/conf.d/default.conf
 
+RUN echo "build $(date)"
+
 # Copiar config nginx
 COPY nginx.conf /etc/nginx/conf.d/default.conf
 
