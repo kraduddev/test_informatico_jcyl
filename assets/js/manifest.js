@@ -58,7 +58,12 @@ function renderTestGrid(tests) {
 function checkResumeBanner() {
   const state = getSessionState();
   const banner = document.getElementById('resume-banner');
-  if (!state || !banner) return;
+  if (!banner) return;
+
+  if (!state) {
+    banner.style.display = 'none';
+    return;
+  }
 
   const testName = state.testName || 'Test';
   const current  = (state.currentIndex || 0) + 1;
@@ -68,11 +73,19 @@ function checkResumeBanner() {
   document.getElementById('resume-progress').textContent  = `Pregunta ${current} de ${total}`;
   banner.style.display = 'flex';
 
-  document.getElementById('btn-resume').addEventListener('click', () => {
+  // Replace buttons to avoid accumulating duplicate listeners on re-entry
+  const btnResume  = document.getElementById('btn-resume');
+  const btnDiscard = document.getElementById('btn-discard');
+  const freshResume  = btnResume.cloneNode(true);
+  const freshDiscard = btnDiscard.cloneNode(true);
+  btnResume.replaceWith(freshResume);
+  btnDiscard.replaceWith(freshDiscard);
+
+  freshResume.addEventListener('click', () => {
     startQuizFromSession(state);
   });
 
-  document.getElementById('btn-discard').addEventListener('click', () => {
+  freshDiscard.addEventListener('click', () => {
     if (confirm('¿Descartar la sesión guardada y empezar desde cero?')) {
       clearSessionState();
       banner.style.display = 'none';
