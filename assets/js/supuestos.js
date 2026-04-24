@@ -7,6 +7,16 @@
 const DATA_URL = 'supuestos/categorias.json';
 let cachedData = null;
 
+// Mapa origen → ruta del fichero markdown completo
+const ORIGEN_A_FICHERO = {
+  'JCyL 2022':      'supuestos/jcyl-2022.md',
+  'JCyL 2024':      'supuestos/jcyl-2024.md',
+  'Salamanca 2023': 'supuestos/salamanca-2023.md',
+};
+
+// Caché de ficheros MD ya cargados
+const mdCache = {};
+
 async function loadData() {
   if (cachedData) return cachedData;
   const res = await fetch(DATA_URL);
@@ -48,6 +58,7 @@ export async function renderPorExamen() {
 
     container.innerHTML = origenesOrdenados.map((origen, idx) => {
       const preguntas = grupos[origen];
+      const tieneFichero = !!ORIGEN_A_FICHERO[origen];
       return `
         <div class="supuesto-group">
           <button class="supuesto-group-header" data-group="${idx}" aria-expanded="false">
@@ -61,6 +72,25 @@ export async function renderPorExamen() {
             </svg>
           </button>
           <div class="supuesto-group-body" id="group-body-${idx}">
+            ${tieneFichero ? `
+            <div class="examen-plantilla-wrap">
+              <button class="examen-plantilla-toggle" data-origen="${encodeURIComponent(origen)}">
+                <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24"
+                     fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                  <polyline points="14 2 14 8 20 8"></polyline>
+                </svg>
+                Ver plantilla de examen
+                <svg class="chevron-sm" xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24"
+                     fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                  <polyline points="6 9 12 15 18 9"></polyline>
+                </svg>
+              </button>
+              <div class="examen-plantilla-panel" hidden>
+                <div class="examen-plantilla-content"></div>
+              </div>
+            </div>
+            ` : ''}
             ${preguntas.map((p, pi) => renderPreguntaCard(p, pi, true)).join('')}
           </div>
         </div>
@@ -68,6 +98,7 @@ export async function renderPorExamen() {
     }).join('');
 
     bindAccordions(container);
+    bindPlantillaExamen(container);
   } catch (err) {
     container.innerHTML = `<p class="supuestos-error">${err.message}</p>`;
   }
@@ -172,6 +203,47 @@ function renderPreguntaCard(pregunta, idx, showCategoria) {
   `;
 }
 
+function bindPlantillaExamen(container) {
+  container.querySelectorAll('.examen-plantilla-toggle').forEach(btn => {
+    btn.addEventListener('click', async () => {
+      const origen = decodeURIComponent(btn.dataset.origen);
+      const panel = btn.nextElementSibling;
+      const content = panel.querySelector('.examen-plantilla-content');
+      const isOpen = !panel.hidden;
+
+      if (isOpen) {
+        panel.hidden = true;
+        btn.classList.remove('active');
+        return;
+      }
+
+      // Abrir panel
+      panel.hidden = false;
+      btn.classList.add('active');
+
+      // Si ya estaba cargado, no repetir fetch
+      if (mdCache[origen]) {
+        content.innerHTML = mdCache[origen];
+        return;
+      }
+
+      content.innerHTML = '<div class="loader-wrap"><div class="loader"></div></div>';
+
+      try {
+        const fichero = ORIGEN_A_FICHERO[origen];
+        const res = await fetch(fichero);
+        if (!res.ok) throw new Error(`No se pudo cargar ${fichero}`);
+        const text = await res.text();
+        const html = window.marked.parse(text);
+        mdCache[origen] = html;
+        content.innerHTML = html;
+      } catch (e) {
+        content.innerHTML = `<p class="supuestos-error">${e.message}</p>`;
+      }
+    });
+  });
+}
+
 function bindAccordions(container) {
   // Acordeones de grupos (examen / categoría)
   container.querySelectorAll('.supuesto-group-header').forEach(btn => {
@@ -194,5 +266,6 @@ function bindAccordions(container) {
       btn.querySelector('svg').style.transform = open ? '' : 'rotate(180deg)';
     });
   });
+
 }
 

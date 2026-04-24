@@ -1291,6 +1291,170 @@ h3 { font-size: 1.1rem;  font-weight: 600; color: var(--color-text); }
 .supuestos-error { color: var(--color-wrong); }
 
 /* =============================================
+   SUPUESTOS: PLANTILLA DE EXAMEN
+   ============================================= */
+.examen-plantilla-wrap {
+  margin: 1.1rem 0 .5rem;
+}
+
+.examen-plantilla-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: .45rem;
+  background: none;
+  border: 1.5px solid #0d9488;
+  border-radius: var(--radius-sm);
+  padding: .4rem .95rem;
+  font-size: .85rem;
+  font-weight: 600;
+  color: #0d9488;
+  cursor: pointer;
+  transition: all var(--transition);
+  font-family: var(--font);
+}
+
+.examen-plantilla-toggle:hover {
+  background: rgba(13,148,136,.08);
+}
+
+.examen-plantilla-toggle.active {
+  background: rgba(13,148,136,.12);
+}
+
+.examen-plantilla-toggle .chevron-sm {
+  transition: transform var(--transition);
+}
+
+.examen-plantilla-toggle.active .chevron-sm {
+  transform: rotate(180deg);
+}
+
+.examen-plantilla-panel {
+  margin-top: .75rem;
+  border: 1.5px solid #0d9488;
+  border-radius: var(--radius-md);
+  background: var(--color-surface);
+  overflow: hidden;
+}
+
+.examen-plantilla-content {
+  padding: 1.25rem 1.5rem;
+  max-height: 60vh;
+  overflow-y: auto;
+  font-size: .9rem;
+  line-height: 1.7;
+  color: var(--color-text);
+}
+
+/* Estilos markdown dentro del panel */
+.examen-plantilla-content h1,
+.examen-plantilla-content h2,
+.examen-plantilla-content h3,
+.examen-plantilla-content h4 {
+  color: var(--color-text);
+  margin: 1.2rem 0 .5rem;
+  line-height: 1.35;
+}
+
+.examen-plantilla-content h1 { font-size: 1.4rem; border-bottom: 2px solid #0d9488; padding-bottom: .4rem; }
+.examen-plantilla-content h2 { font-size: 1.15rem; border-bottom: 1px solid var(--color-border); padding-bottom: .3rem; }
+.examen-plantilla-content h3 { font-size: 1rem; color: #0d9488; }
+.examen-plantilla-content h4 { font-size: .93rem; }
+
+.examen-plantilla-content p { margin: .6rem 0; }
+
+.examen-plantilla-content ul,
+.examen-plantilla-content ol {
+  padding-left: 1.5rem;
+  margin: .5rem 0;
+}
+
+.examen-plantilla-content li { margin: .25rem 0; }
+
+.examen-plantilla-content code {
+  background: var(--color-surface-alt);
+  border: 1px solid var(--color-border);
+  border-radius: 4px;
+  padding: .1rem .4rem;
+  font-size: .85em;
+  font-family: 'Fira Code', 'Consolas', monospace;
+}
+
+.examen-plantilla-content pre {
+  background: var(--color-surface-alt);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  padding: 1rem;
+  overflow-x: auto;
+  margin: .75rem 0;
+}
+
+.examen-plantilla-content pre code {
+  background: none;
+  border: none;
+  padding: 0;
+  font-size: .85rem;
+}
+
+.examen-plantilla-content table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: .85rem;
+  margin: .75rem 0;
+}
+
+.examen-plantilla-content th {
+  background: var(--color-surface-alt);
+  padding: .5rem .75rem;
+  text-align: left;
+  font-size: .75rem;
+  text-transform: uppercase;
+  font-weight: 700;
+  letter-spacing: .05em;
+  color: var(--color-text-light);
+  border: 1px solid var(--color-border);
+}
+
+.examen-plantilla-content td {
+  padding: .55rem .75rem;
+  border: 1px solid var(--color-border);
+}
+
+.examen-plantilla-content tr:nth-child(even) td {
+  background: var(--color-surface-alt);
+}
+
+.examen-plantilla-content blockquote {
+  border-left: 4px solid #0d9488;
+  padding: .5rem 1rem;
+  margin: .75rem 0;
+  color: var(--color-text-light);
+  font-style: italic;
+  background: rgba(13,148,136,.05);
+  border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+}
+
+.examen-plantilla-content strong { color: var(--color-text); }
+.examen-plantilla-content em { color: var(--color-text-light); }
+
+.examen-plantilla-content hr {
+  border: none;
+  border-top: 1px solid var(--color-border);
+  margin: 1rem 0;
+}
+
+/* Modo oscuro para el panel */
+@media (prefers-color-scheme: dark) {
+  .examen-plantilla-toggle { border-color: #2dd4bf; color: #2dd4bf; }
+  .examen-plantilla-toggle:hover { background: rgba(45,212,191,.1); }
+  .examen-plantilla-toggle.active { background: rgba(45,212,191,.15); }
+  .examen-plantilla-panel { border-color: #2dd4bf; }
+  .examen-plantilla-content h3 { color: #2dd4bf; }
+  .examen-plantilla-content blockquote { border-left-color: #2dd4bf; background: rgba(45,212,191,.07); }
+  .examen-plantilla-content h1 { border-bottom-color: #2dd4bf; }
+}
+
+/* =============================================
    SCROLLBAR PERSONALIZADO
    ============================================= */
 ::-webkit-scrollbar { width: 6px; }
