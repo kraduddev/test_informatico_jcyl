@@ -958,6 +958,323 @@ h3 { font-size: 1.1rem;  font-weight: 600; color: var(--color-text); }
 }
 
 /* =============================================
+   PANTALLA: DASHBOARD
+   ============================================= */
+.dashboard-header {
+  margin-bottom: 2rem;
+}
+
+.dashboard-header p {
+  color: var(--color-text-light);
+  margin-top: .4rem;
+}
+
+.dashboard-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1.25rem;
+}
+
+@media (min-width: 560px) {
+  .dashboard-grid { grid-template-columns: 1fr 1fr; }
+}
+
+.dashboard-card {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: .6rem;
+  background: var(--color-surface);
+  border: 1.5px solid var(--color-border);
+  border-radius: var(--radius-xl);
+  padding: 2rem 1.75rem;
+  cursor: pointer;
+  text-align: left;
+  transition: border-color var(--transition), box-shadow var(--transition), transform var(--transition);
+  box-shadow: var(--shadow-md);
+}
+
+.dashboard-card:hover {
+  border-color: var(--color-primary);
+  box-shadow: var(--shadow-lg);
+  transform: translateY(-3px);
+}
+
+.dashboard-card-icon {
+  font-size: 2.4rem;
+  line-height: 1;
+  margin-bottom: .25rem;
+}
+
+.dashboard-card h2 {
+  font-size: 1.3rem;
+  font-weight: 800;
+  margin: 0;
+}
+
+.dashboard-card p {
+  font-size: .9rem;
+  color: var(--color-text-light);
+  line-height: 1.5;
+  margin: 0;
+}
+
+.dashboard-card-cta {
+  margin-top: .5rem;
+  font-size: .9rem;
+  font-weight: 700;
+  color: var(--color-primary);
+}
+
+/* Botón de volver genérico dentro de selector-header */
+.btn-back-section {
+  margin-bottom: .5rem;
+  padding: .35rem .6rem;
+  font-size: .85rem;
+}
+
+/* =============================================
+   SUPUESTOS: ACORDEONES DE GRUPOS
+   ============================================= */
+.supuesto-group {
+  background: var(--color-surface);
+  border: 1.5px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  margin-bottom: 1rem;
+  overflow: hidden;
+  box-shadow: var(--shadow-sm);
+}
+
+.supuesto-group-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  padding: 1.1rem 1.4rem;
+  background: var(--color-surface);
+  border: none;
+  cursor: pointer;
+  text-align: left;
+  font-family: var(--font);
+  transition: background var(--transition);
+}
+
+.supuesto-group-header:hover {
+  background: var(--color-surface-alt);
+}
+
+.supuesto-group-title {
+  display: flex;
+  align-items: center;
+  gap: .75rem;
+  flex-wrap: wrap;
+}
+
+.supuesto-cat-name {
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--color-text);
+}
+
+.supuesto-origen-badge {
+  display: inline-block;
+  font-size: .75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: .05em;
+  background: var(--color-primary-light);
+  color: var(--color-primary);
+  padding: .22rem .65rem;
+  border-radius: 999px;
+}
+
+.supuesto-group-count {
+  font-size: .8rem;
+  color: var(--color-text-light);
+  font-weight: 500;
+}
+
+.supuesto-group-header .chevron {
+  flex-shrink: 0;
+  color: var(--color-text-light);
+  transition: transform var(--transition);
+}
+
+.supuesto-group-header[aria-expanded="true"] .chevron {
+  transform: rotate(180deg);
+}
+
+.supuesto-group-body {
+  display: none;
+  padding: 0 1.25rem 1.25rem;
+  border-top: 1px solid var(--color-border);
+  animation: fadeIn .25s ease;
+}
+
+.supuesto-group-body.open {
+  display: block;
+}
+
+/* =============================================
+   SUPUESTOS: META DE CATEGORÍA
+   ============================================= */
+.supuesto-cat-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  margin: 1.1rem 0;
+  padding: 1rem;
+  background: var(--color-surface-alt);
+  border-radius: var(--radius-md);
+  border: 1px solid var(--color-border);
+}
+
+.supuesto-meta-inline {
+  display: flex;
+  flex-wrap: wrap;
+  gap: .75rem;
+  margin: .75rem 0;
+}
+
+.supuesto-meta-block {
+  display: flex;
+  flex-direction: column;
+  gap: .4rem;
+  min-width: 0;
+}
+
+.supuesto-meta-label {
+  font-size: .7rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: .07em;
+  color: var(--color-text-light);
+}
+
+.supuesto-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: .35rem;
+}
+
+.tag {
+  display: inline-block;
+  font-size: .76rem;
+  font-weight: 600;
+  padding: .2rem .6rem;
+  border-radius: 999px;
+}
+
+.tag-core {
+  background: var(--color-primary-light);
+  color: var(--color-primary);
+  border: 1px solid rgba(37,99,235,.2);
+}
+
+.tag-ley {
+  background: var(--color-warning-bg);
+  color: var(--color-warning);
+  border: 1px solid var(--color-warning-border);
+}
+
+/* =============================================
+   SUPUESTOS: TARJETA DE PREGUNTA
+   ============================================= */
+.pregunta-card {
+  background: var(--color-surface-alt);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  padding: 1.1rem 1.2rem;
+  margin-top: 1rem;
+}
+
+.pregunta-card-header {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: .5rem;
+  margin-bottom: .75rem;
+}
+
+.pregunta-num {
+  margin-left: auto;
+  font-size: .72rem;
+  font-weight: 700;
+  color: var(--color-text-light);
+  background: var(--color-border);
+  padding: .15rem .5rem;
+  border-radius: 999px;
+}
+
+.pregunta-enunciado {
+  font-size: .95rem;
+  line-height: 1.55;
+  color: var(--color-text);
+  margin-bottom: .85rem;
+}
+
+.pregunta-plantilla-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: .4rem;
+  background: none;
+  border: 1.5px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  padding: .35rem .85rem;
+  font-size: .82rem;
+  font-weight: 600;
+  color: var(--color-text-light);
+  cursor: pointer;
+  transition: all var(--transition);
+  font-family: var(--font);
+}
+
+.pregunta-plantilla-toggle:hover {
+  border-color: var(--color-primary);
+  color: var(--color-primary);
+}
+
+.pregunta-plantilla-toggle.active {
+  background: var(--color-primary-light);
+  border-color: var(--color-primary);
+  color: var(--color-primary);
+}
+
+.pregunta-plantilla-toggle svg {
+  transition: transform var(--transition);
+}
+
+.pregunta-plantilla {
+  background: var(--color-surface);
+  border-left: 4px solid var(--color-primary);
+  border-radius: 0 var(--radius-md) var(--radius-md) 0;
+  padding: .9rem 1rem;
+  margin-top: .65rem;
+  font-size: .88rem;
+  line-height: 1.55;
+  animation: fadeIn .2s ease;
+}
+
+.pregunta-plantilla strong {
+  display: block;
+  font-size: .72rem;
+  text-transform: uppercase;
+  letter-spacing: .07em;
+  color: var(--color-primary);
+  margin-bottom: .35rem;
+}
+
+.supuestos-empty,
+.supuestos-error {
+  text-align: center;
+  padding: 2rem 1rem;
+  color: var(--color-text-light);
+  font-size: .95rem;
+}
+
+.supuestos-error { color: var(--color-wrong); }
+
+/* =============================================
    SCROLLBAR PERSONALIZADO
    ============================================= */
 ::-webkit-scrollbar { width: 6px; }

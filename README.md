@@ -1,6 +1,6 @@
 # Quiz JCyL — Técnico Superior de Informática
 
-Web estática tipo **quiz/flashcard** para practicar los exámenes de oposición de la Junta de Castilla y León. Sin dependencias externas, funciona en cualquier servidor estático.
+Web estática tipo **quiz/flashcard** y **visor de supuestos prácticos** para preparar las oposiciones de Técnico Superior de Informática de la Junta de Castilla y León. Sin dependencias externas, funciona en cualquier servidor estático.
 
 ---
 
@@ -29,19 +29,41 @@ Usa el plugin **Live Server** o el servidor de desarrollo integrado de tu IDE.
 
 ```
 test-jcyl/
-├── index.html                 ← SPA principal
+├── index.html                   ← SPA principal
 ├── README.md
 ├── tests/
-│   ├── index.json             ← Manifiesto de tests disponibles
-│   └── test-2024.json         ← Examen JCyL octubre 2024
+│   ├── index.json               ← Manifiesto de tests disponibles
+│   ├── test-2024.json           ← Examen JCyL octubre 2024
+│   └── test-age-2025.json       ← Examen AGE 2025
+├── supuestos/
+│   └── categorias.json          ← Supuestos prácticos agrupados por categoría
 └── assets/
     ├── css/
     │   └── styles.css
     └── js/
-        ├── app.js             ← Punto de entrada, navegación entre pantallas
-        ├── manifest.js        ← Carga del manifiesto y banner de sesión en curso
-        ├── quiz.js            ← Motor del quiz, aleatoriedad, persistencia
-        └── stats.js           ← Pantalla de estadísticas históricas
+        ├── app.js               ← Punto de entrada, dashboard y navegación
+        ├── manifest.js          ← Carga del manifiesto y banner de sesión en curso
+        ├── quiz.js              ← Motor del quiz, aleatoriedad, persistencia
+        ├── stats.js             ← Pantalla de estadísticas históricas
+        └── supuestos.js         ← Carga y renderizado de supuestos prácticos
+```
+
+---
+
+## 🗺️ Flujo de la aplicación
+
+```
+Dashboard
+├── 📝 Tests
+│   ├── Selección de test
+│   ├── Configuración (temas, aleatoridad)
+│   ├── Quiz (flashcard con retroalimentación)
+│   ├── Resultados
+│   └── Estadísticas históricas
+│
+└── 📋 Supuestos Prácticos
+    ├── 📂 Por Examen → preguntas agrupadas por convocatoria/origen
+    └── 🏷️ Por Categoría → preguntas agrupadas por área temática
 ```
 
 ---
@@ -83,18 +105,48 @@ test-jcyl/
     "ejercicio": "Primer Ejercicio",
     "fecha": "26 de octubre de 2024",
     "fichero": "tests/test-2024.json"
-  },
-  {
-    "id": "test-2025",
-    "nombre": "Técnico Superior de Informática — JCyL",
-    "ejercicio": "Primer Ejercicio",
-    "fecha": "15 de mayo de 2025",
-    "fichero": "tests/test-2025.json"
   }
 ]
 ```
 
-¡Listo! El selector de la página de inicio lo mostrará automáticamente.
+¡Listo! El selector de la sección de Tests lo mostrará automáticamente.
+
+---
+
+## ➕ Añadir supuestos prácticos
+
+Todo el contenido de supuestos reside en `supuestos/categorias.json`. La estructura es:
+
+```json
+{
+  "categorias": [
+    {
+      "nombre": "Nombre de la categoría",
+      "conceptos_core": ["Concepto 1", "Concepto 2"],
+      "leyes_relacionadas": ["Ley Orgánica X", "Real Decreto Y"],
+      "preguntas": [
+        {
+          "origen": "JCyL 2024",
+          "enunciado": "Texto completo del supuesto...",
+          "plantilla_solucion": "Estructura orientativa de respuesta..."
+        }
+      ]
+    }
+  ]
+}
+```
+
+| Campo | Descripción |
+|---|---|
+| `nombre` | Nombre de la categoría temática (ej. *Bases de Datos*, *Seguridad*) |
+| `conceptos_core` | Lista de conceptos clave que cubre la categoría |
+| `leyes_relacionadas` | Normativa aplicable (leyes, reales decretos, directivas…) |
+| `origen` | Identificador de la convocatoria (ej. `"JCyL 2024"`, `"AGE 2025"`) — se usa para agrupar en la vista *Por Examen* |
+| `enunciado` | Texto completo del supuesto tal como aparece en el examen |
+| `plantilla_solucion` | Guía de respuesta orientativa |
+
+La vista **Por Examen** agrupa automáticamente todas las preguntas de todas las categorías por el campo `origen`, ordenadas cronológicamente.  
+La vista **Por Categoría** muestra cada categoría con sus conceptos core, leyes y sus preguntas asociadas.
 
 ---
 
@@ -102,11 +154,14 @@ test-jcyl/
 
 | Característica | Descripción |
 |---|---|
+| **Dashboard dual** | Acceso independiente a Tests y Supuestos Prácticos desde la pantalla de inicio |
 | **Aleatoriedad total** | Las preguntas y sus opciones se barajan con Fisher-Yates en cada sesión |
 | **Filtro por temas** | Practica solo los bloques temáticos que te interesen |
 | **Retroalimentación inmediata** | Al responder se resalta la opción correcta/incorrecta y aparece la explicación |
 | **Sesión en curso** | Si recargas la página, puedes retomar el test donde lo dejaste |
 | **Historial de estadísticas** | KPIs globales + desglose de todas las sesiones anteriores por test |
+| **Supuestos por examen** | Vista agrupada por convocatoria con acordeón por origen |
+| **Supuestos por categoría** | Vista temática con conceptos core, leyes relacionadas y plantilla de respuesta |
 | **Modo oscuro** | Se activa automáticamente según la preferencia del sistema |
 | **Sin dependencias** | HTML + CSS + JavaScript puro. Funciona en cualquier servidor estático |
 

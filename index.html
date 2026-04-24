@@ -44,11 +44,36 @@
     <div class="container">
 
       <!-- ─────────────────────────────────────────────────
+           PANTALLA 0: DASHBOARD
+      ────────────────────────────────────────────────── -->
+      <section class="screen active" id="screen-dashboard" aria-label="Inicio">
+        <div class="dashboard-header">
+          <h1>Quiz JCyL</h1>
+          <p>Técnico Superior de Informática — Elige una sección para comenzar.</p>
+        </div>
+        <div class="dashboard-grid">
+          <button class="dashboard-card" id="btn-go-tests">
+            <div class="dashboard-card-icon">📝</div>
+            <h2>Tests</h2>
+            <p>Practica con preguntas tipo test de convocatorias anteriores y consulta tus estadísticas.</p>
+            <span class="dashboard-card-cta">Ir a los tests →</span>
+          </button>
+          <button class="dashboard-card" id="btn-go-supuestos">
+            <div class="dashboard-card-icon">📋</div>
+            <h2>Supuestos Prácticos</h2>
+            <p>Explora los supuestos de exámenes reales por convocatoria o por categoría temática.</p>
+            <span class="dashboard-card-cta">Ir a supuestos →</span>
+          </button>
+        </div>
+      </section>
+
+      <!-- ─────────────────────────────────────────────────
            PANTALLA 1: SELECTOR DE TEST
       ────────────────────────────────────────────────── -->
-      <section class="screen active" id="screen-selector" aria-label="Selección de test">
+      <section class="screen" id="screen-tests" aria-label="Selección de test">
 
         <div class="selector-header">
+          <button class="btn btn-ghost btn-back-section" id="btn-back-from-tests">← Volver</button>
           <h1>Elige un test</h1>
           <p>Selecciona el examen que quieres practicar.</p>
         </div>
@@ -259,6 +284,59 @@
           <!-- Rellena stats.js -->
         </div>
 
+      </section>
+
+      <!-- ─────────────────────────────────────────────────
+           PANTALLA 6: MENÚ SUPUESTOS PRÁCTICOS
+      ────────────────────────────────────────────────── -->
+      <section class="screen" id="screen-supuestos-menu" aria-label="Supuestos Prácticos">
+        <div class="selector-header">
+          <button class="btn btn-ghost btn-back-section" id="btn-back-from-supuestos-menu">← Volver</button>
+          <h1>Supuestos Prácticos</h1>
+          <p>Explora los supuestos de exámenes reales. Elige cómo quieres navegar.</p>
+        </div>
+        <div class="dashboard-grid">
+          <button class="dashboard-card" id="btn-go-examenes">
+            <div class="dashboard-card-icon">📂</div>
+            <h2>Por Examen</h2>
+            <p>Ve todas las preguntas agrupadas por convocatoria y origen del examen.</p>
+            <span class="dashboard-card-cta">Ver exámenes →</span>
+          </button>
+          <button class="dashboard-card" id="btn-go-categorias">
+            <div class="dashboard-card-icon">🏷️</div>
+            <h2>Por Categoría</h2>
+            <p>Filtra las preguntas por área temática: bases de datos, redes, seguridad…</p>
+            <span class="dashboard-card-cta">Ver categorías →</span>
+          </button>
+        </div>
+      </section>
+
+      <!-- ─────────────────────────────────────────────────
+           PANTALLA 7: SUPUESTOS POR EXAMEN
+      ────────────────────────────────────────────────── -->
+      <section class="screen" id="screen-supuestos-examenes" aria-label="Supuestos por examen">
+        <div class="selector-header">
+          <button class="btn btn-ghost btn-back-section" id="btn-back-from-examenes">← Volver</button>
+          <h1>Por Examen</h1>
+          <p>Preguntas agrupadas por convocatoria.</p>
+        </div>
+        <div id="examenes-content">
+          <div class="loader-wrap"><div class="loader"></div></div>
+        </div>
+      </section>
+
+      <!-- ─────────────────────────────────────────────────
+           PANTALLA 8: SUPUESTOS POR CATEGORÍA
+      ────────────────────────────────────────────────── -->
+      <section class="screen" id="screen-supuestos-categorias" aria-label="Supuestos por categoría">
+        <div class="selector-header">
+          <button class="btn btn-ghost btn-back-section" id="btn-back-from-categorias">← Volver</button>
+          <h1>Por Categoría</h1>
+          <p>Todas las preguntas de una misma área temática.</p>
+        </div>
+        <div id="categorias-content">
+          <div class="loader-wrap"><div class="loader"></div></div>
+        </div>
       </section>
 
     </div><!-- /.container -->
